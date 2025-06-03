@@ -27,4 +27,3 @@ def unlock_achievements(conn, achievement_name):
     except Exception as e:
         print(f'ошибка не удалось разблокировать достижение: {e}')
         return False
-

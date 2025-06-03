@@ -5,6 +5,7 @@ from config import DB_CONFIG
 def get_db_connection():
     try:
         conn = psycopg2.connect(**DB_CONFIG)
+        print("Подключение произошло успешно")
         return conn
     except Error as e:
         print(f"Ошибка подключения: {e}")
@@ -15,20 +16,21 @@ def init_db():
     if conn:
         try:
             with conn.cursor() as cur:
+                # Создаем таблицу с UNIQUE ограничением на name
                 cur.execute("""
-                CREATE TABLE IF NOT EXIST achievements(
+                CREATE TABLE IF NOT EXISTS achievements(
                     id SERIAL PRIMARY KEY,
-                    name VARCHAR(100) NOT NULL,
+                    name VARCHAR(100) NOT NULL UNIQUE,
                     complexity INTEGER NOT NULL,
                     unlocked BOOLEAN DEFAULT FALSE
                     );
                 """)
 
+                # Теперь можно использовать ON CONFLICT, так как name UNIQUE
                 cur.execute("""
-                    INSERT INTO achievements(name)
-                    VALUES ('ТЫ ПАПА'),('ТЫ МАМА'),('ПРИВЕТ СЕСТРЁНКА'),('ПРИВЕТ ДРУЖИЩЕ')
-                    ON CONFLICT (name) DO NOTHING
-                    );
+                    INSERT INTO achievements(name, complexity)
+                    VALUES ('ТЫ ПАПА', 1), ('ТЫ МАМА', 1), ('ПРИВЕТ СЕСТРЁНКА', 2), ('ПРИВЕТ ДРУЖИЩЕ', 2)
+                    ON CONFLICT (name) DO NOTHING;
                 """)
 
                 conn.commit()

@@ -1,6 +1,15 @@
 import sys
 import pygame
-from config import SCREEN_WIDTH, SCREEN_HEIGHT, init_assets
+from config import *
+from game.states import *
+from game.ui import *
+from database.db_connection import *
+from database.queries import *
+
+# Инициализация БД
+init_db()
+conn = get_db_connection()
+
 
 # Инициализация Pygame ДО загрузки изображений
 pygame.init()
@@ -50,6 +59,7 @@ def main_menu():
         # Рисуем кнопки
         screen.blit(play_button_img, play_button_rect)
         screen.blit(reboot_button_img, reboot_button_rect)
+
         screen.blit(records_button_img, records_button_rect)
 
         pygame.display.flip()
