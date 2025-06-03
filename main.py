@@ -59,7 +59,7 @@ class Game:
         pygame.display.flip()
 
     def render_menu(self):
-        self.screen.blit(background_img, assets.images.background_rect)
+        self.screen.blit(background_img, background_rect)
 
         overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
         overlay.fill((0, 0, 0, 128))
