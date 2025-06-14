@@ -5,12 +5,10 @@ from game.states import *
 from game.ui import *
 from database.db_connection import *
 from database.queries import *
-<<<<<<< HEAD
 
 # Инициализация БД
-init_db()
+# init_db()
 conn = get_db_connection()
-
 
 # Инициализация Pygame ДО загрузки изображений
 pygame.init()
@@ -24,44 +22,99 @@ from config import (
     play_button_img, reboot_button_img, records_button_img,
     background_img, background_rect
 )
-=======
->>>>>>> origin/master
 
 
-class Game:
-    def __init__(self):
-        # Инициализация Pygame ДО загрузки изображений
-        pygame.init()
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-        pygame.display.set_caption('quiz_max')
-        self.clock = pygame.time.Clock()  # Добавлено self. для сохранения как атрибута
-        self.font_large = pygame.font.SysFont('Arial', 72, bold=True)
+def achievements_screen():
+    font = pygame.font.SysFont('Arial', 36)
+    button_font = pygame.font.SysFont('Arial', 24)
+    achievements = get_achievements(conn)  # функция уже есть в queries.py
 
-        # Инициализация БД
-        init_db()
-        self.conn = get_db_connection()
-        self.achievements = get_achievements(self.conn)
+    back_button_rect = pygame.Rect(20, 20, 100, 50)
 
-        # Состояние игры (перенесено в __init__ и сделано атрибутами экземпляра)
-        self.current_state = GameState.MENU
-        self.selected_role = ""
-
-        # Теперь безопасно загружаем изображения
-        init_assets()  # Предполагается, что эта функция инициализирует глобальные переменные кнопок
-
-    def handle_events(self):
+    while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.quit_game()
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if back_button_rect.collidepoint(mouse_pos):
+                    return
 
-            if self.current_state == GameState.MENU:
-                self.handle_menu_events(event)
+        screen.fill(BACKGROUND_COLOR)
 
-    def handle_menu_events(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            mouse_pos = pygame.mouse.get_pos()
+        title = font.render("Достижения", True, WHITE)
+        screen.blit(title, (310, 30))
 
-<<<<<<< HEAD
+        # Кнопка "Назад"
+        pygame.draw.rect(screen, RED, back_button_rect)
+        back_text = button_font.render("Назад", True, WHITE)
+        text_rect = back_text.get_rect(center=back_button_rect.center)
+        screen.blit(back_text, text_rect)
+
+        pygame.display.flip()
+
+
+def settings_screen():
+    font = pygame.font.SysFont('Arial', 36)
+    button_font = pygame.font.SysFont('Arial', 24)
+
+    back_button_rect = pygame.Rect(20, 20, 100, 50)
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if back_button_rect.collidepoint(mouse_pos):
+                    return
+
+        screen.fill(BACKGROUND_COLOR)
+
+        # Заголовок
+        title = font.render("Настройки", True, WHITE)
+        screen.blit(title, (310, 30))
+
+        # Кнопка "Назад"
+        pygame.draw.rect(screen, RED, back_button_rect)
+        back_text = button_font.render("Назад", True, WHITE)
+        text_rect = back_text.get_rect(center=back_button_rect.center)
+        screen.blit(back_text, text_rect)
+
+        pygame.display.flip()
+
+
+def main_menu():
+    """Главное меню игры"""
+    # Создаем шрифт для надписи
+    font = pygame.font.SysFont('Arial', 72, bold=True)
+    title_text = font.render('ВИКТОРИНА', True, (255, 255, 255))
+    title_rect = title_text.get_rect(center=(SCREEN_WIDTH // 2, 100))
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if play_button_rect.collidepoint(mouse_pos):
+                    return "play"
+                elif reboot_button_rect.collidepoint(mouse_pos):
+                    return "settings"
+                elif records_button_rect.collidepoint(mouse_pos):
+                    return "achievements"
+
+        # Отрисовка
+        screen.blit(background_img, background_rect)  # Сначала рисуем фон
+
+        # Затем рисуем полупрозрачный прямоугольник для лучшей читаемости текста
+        overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 128))  # Черный с прозрачностью 50%
+        screen.blit(overlay, (0, 0))
+
         # Рисуем заголовок
         screen.blit(title_text, title_rect)
         # Рисуем кнопки
@@ -69,59 +122,23 @@ class Game:
         screen.blit(reboot_button_img, reboot_button_rect)
 
         screen.blit(records_button_img, records_button_rect)
-=======
-            # Предполагается, что эти переменные определены в модуле ui после init_assets()
-            if play_button_rect.collidepoint(mouse_pos):
-                self.current_state = GameState.ROLE_SELECT
-            elif reboot_button_rect.collidepoint(mouse_pos):
-                print("настройки")
-            elif records_button_rect.collidepoint(mouse_pos):
-                self.current_state = GameState.ACHIEVEMENTS
-
-    def render(self):
-        self.screen.fill(WHITE)
-
-        if self.current_state == GameState.MENU:
-            self.render_menu()
-        elif self.current_state == GameState.ACHIEVEMENTS:
-            self.render_achievements()
->>>>>>> origin/master
 
         pygame.display.flip()
 
-    def render_menu(self):
-        self.screen.blit(background_img, background_rect)
 
-        overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-        overlay.fill((0, 0, 0, 128))
-        self.screen.blit(overlay, (0, 0))
-
-        title = self.font_large.render('ВИКТОРИНА', True, WHITE)
-        title_rect = title.get_rect(center=(SCREEN_WIDTH // 2, 100))
-        self.screen.blit(title, title_rect)
-
-        # Предполагается, что эти переменные определены в модуле ui
-        self.screen.blit(play_button_img, play_button_rect)
-        self.screen.blit(reboot_button_img, reboot_button_rect)
-        self.screen.blit(records_button_img, records_button_rect)
-
-    def render_achievements(self):
-        # Реализация отображения достижений
-        pass
-
-    def quit_game(self):
-        if self.conn:
-            self.conn.close()
-        pygame.quit()
-        sys.exit()
-
-    def run(self):
-        while True:
-            self.handle_events()
-            self.render()
-            self.clock.tick(FPS)  # Исправлено с clock на self.clock
+def main():
+    """Основной цикл"""
+    while True:
+        action = main_menu()
+        if action == "play":
+            print("Запуск игры...")
+        elif action == "achievements":
+            achievements_screen()
+        elif action == "settings":
+            settings_screen()
 
 
 if __name__ == "__main__":
-    game = Game()
-    game.run()
+    main()
+    pygame.quit()
+    sys.exit()
