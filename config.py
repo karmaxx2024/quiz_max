@@ -29,6 +29,7 @@ def init_assets():
     background_img = pygame.image.load('assets/images/py.imag.jpg').convert_alpha()
     back_button_img = pygame.image.load('assets/images/back_button.png').convert_alpha()
 
+
     # Масштабируем фоновое изображение под размер экрана
     background_img = pygame.transform.scale(background_img, (SCREEN_WIDTH, SCREEN_HEIGHT))
     background_rect = background_img.get_rect(topleft=(0, 0))
